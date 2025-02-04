@@ -19,7 +19,16 @@ const FrontPage = (): JSX.Element => {
     const uploadRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        getStoredQuestionnaire();
+        if (window.location.hash) {
+            const questionnaireBase64 = window.location.hash.slice(1)
+            const parsed = JSON.parse(decodeURIComponent(atob(questionnaireBase64)))
+            const importedState = mapToTreeState(parsed);
+            dispatch(resetQuestionnaireAction(importedState));
+            setIsLoading(false);
+            setIsFormBuilderShown(true);
+        } else {
+            getStoredQuestionnaire();
+        }
     }, []);
 
     const getStoredQuestionnaire = async () => {
